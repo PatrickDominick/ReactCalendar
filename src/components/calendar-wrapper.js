@@ -6,11 +6,26 @@ export default function calendarWrapper(props) {
 
     const renderCalendarBoxes = () => {
         const calendarBoxesArray = []
-        for (let i = 0; i < 42; i+1) {
+
+        for (let i=1; i<=props.month.start_day; i++){
+            const date = props.month.days_in_previous_month - props.month.start_day  + i
             calendarBoxesArray.push(
-                <CalendarBox />
+                <CalendarBox date = {date} />
             )
         }
+
+        for (let i = 1; i <= props.month.days_in_month; i++) {
+            calendarBoxesArray.push(
+                <CalendarBox date={i} />
+            )
+        }
+
+        for (let i = 1; i<=(42 - props.month.start_day - props.month.days_in_month); i++){
+            calendarBoxesArray.push(
+            <CalendarBox date={i} />
+            )
+        }
+
         return calendarBoxesArray
     }
 

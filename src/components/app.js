@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from "./header";
 import Content from "./content-wrapper";
 import Footer from "./footer";
-import monthData from "../../static/assets/dummyData";
+import loading from "../../static/assets/loading.gif"
 
 
 export default class App extends Component {
@@ -14,7 +14,9 @@ export default class App extends Component {
     ]
     this.now = this.calculateDateData()
     this.state = {
-      month: monthData.data.filter(month => month.name === this.now.month && month.year === this.now.year)[0]
+      monthData: [],
+      month: {},
+      loading: true
     }
 
     this.handleMonthChange = this.handleMonthChange.bind(this)
@@ -28,20 +30,35 @@ export default class App extends Component {
     return { month, year }
   }
 
+  componentDidMount() {
+    fetch("http://127.0.0.1:5000/month/get")
+    .then(response => response.json())
+    .then(data => this.setState({
+      monthData: data,
+      month: data.filter(month => month.name === this.now.month && month.year === this.now.year)[0],
+      loading: false
+    }))
+    .catch(error => console.log("You done messed up getting month data A A Ron!", error))
+  }
+
   handleMonthChange(direction) {
     const currentMonthIndex = this.monthList.indexOf(this.state.month.name)
     // ToDo: Calculate if index overlfow on either end, and update the year accordingly
     const newMonthName = this.monthList[direction === "next" ? currentMonthIndex +1 : currentMonthIndex - 1]
-    const newMonthData = monthData.data.filter(month => month.name === newMonthName)[0]
+    const newMonthData = this.state.monthData.filter(month => month.name === newMonthName)[0]
     this.setState({ month: newMonthData })
   }
 
   render() {
     return (
       <div className='app'>
-        <Header monthName={this.state.month.name} handleMonthChange = {this.handleMonthChange}/>
-        <Content month = {this.state.month}/>
-        <Footer year={this.state.month.year} />
+        {this.state.loading
+        ?
+        <img src={loading} alt="loading gif" ></img>
+        : 
+        [<Header monthName={this.state.month.name} handleMonthChange = {this.handleMonthChange}/>,
+        <Content month = {this.state.month}/>,
+        <Footer year={this.state.month.year} />]}
       </div>
     );
   }
