@@ -31,7 +31,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:5000/month/get")
+    fetch("https://calendar-api-pdn.herokuapp.com/month/get")
     .then(response => response.json())
     .then(data => this.setState({
       monthData: data,
